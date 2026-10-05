@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <climits>
+using namespace std;
+
+// Returns minimum scalar multiplications
+int matrixChainMultiplication(const vector<int>& p) {
+    int n = p.size() - 1;  // Number of matrices
+
+    // dp[i][j] = minimum cost to multiply Ai...Aj
+    vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
+
+    // len = length of the matrix chain
+    for (int len = 2; len <= n; len++) {
+        for (int i = 1; i <= n - len + 1; i++) {
+            int j = i + len - 1;
+
+            dp[i][j] = INT_MAX;
+
+            // Try every possible split
+            for (int k = i; k < j; k++) {
+                int cost = dp[i][k]
+                         + dp[k + 1][j]
+                         + p[i - 1] * p[k] * p[j];
+
+                dp[i][j] = min(dp[i][j], cost);
+            }
+        }
+    }
+
+    return dp[1][n];
+}
+
+int main() {
+    // Matrix dimensions:
+    // A1 = 10x20, A2 = 20x30, A3 = 30x40
+    vector<int> p = {10, 20, 30, 40};
+
+    int result = matrixChainMultiplication(p);
+
+    cout << "Minimum number of scalar multiplications: "
+         << result << endl;
+
+    return 0;
+}
